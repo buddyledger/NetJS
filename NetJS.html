@@ -248,8 +248,8 @@
                         <div class="settings-control-group">
                             <label for="edgeSmoothTypeInput">Edge Smooth Type:</label>
                             <select id="edgeSmoothTypeInput">
-                                <option value="dynamic" selected>Dynamic</option>
-                                <option value="continuous">Continuous</option>
+                                <option value="dynamic">Dynamic</option>
+                                <option value="continuous" selected>Continuous</option>
                                 <option value="curvedCW">Curved CW</option>
                                 <option value="curvedCCW">Curved CCW</option>
                                 <option value="cubicBezier">Cubic Bezier</option>
@@ -313,7 +313,8 @@
             width: 2,
             smooth: {
                 enabled: true,
-                type: "dynamic", // Default smooth type
+                //type: "dynamic", // Default smooth type
+                type: "continuous",
                 roundness: 0.5   // Default roundness if applicable
             }
         },
@@ -374,7 +375,8 @@
                 width: 2,
                 smooth: {
                     enabled: true,
-                    type: "dynamic",
+                    //type: "dynamic",
+                    type: "continuous",
                     roundness: 0.5
                 }
             },
@@ -571,7 +573,7 @@
              if(edgeWidth) edgeWidth.value = edgeDefaults.width;
 
              const smoothType = document.getElementById('edgeSmoothTypeInput');
-             if(smoothType) smoothType.value = edgeDefaults.smooth.type || "dynamic";
+             if(smoothType) smoothType.value = edgeDefaults.smooth.type || "continuous";
              const smoothRoundness = document.getElementById('edgeSmoothRoundnessInput');
              if(smoothRoundness) smoothRoundness.value = edgeDefaults.smooth.roundness || 0.5;
 
