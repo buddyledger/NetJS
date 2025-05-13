@@ -68,7 +68,7 @@
     .list-item-content, .mgmt-list-item-content { flex-grow: 1; display: flex; align-items: center; word-break: break-word; }
     .list-item-actions, .mgmt-list-item-actions { white-space: nowrap; }
     .mgmt-list-color-swatch { min-width:12px; width:12px; height:12px; border-radius:3px; margin-right:5px; display:inline-block; border:1px solid #777;}
-    .legend-node-shape-box { width: 16px; height: 16px; margin-right: 6px; border-width: 2px; border-style: solid; display:inline-block; vertical-align: middle; background-color: #f0f0f0; }
+    .legend-node-shape-box { width: 16px; height: 16px; margin-right: 6px; border-width: 2px; border-style: solid; display:inline-block; vertical-align: middle; background-color: #f0f0f0; } /* Updated in populateRoleLegend JS */
     .list-item-actions button, .mgmt-list-item-actions button { font-size: 0.75em; padding: 2px 5px; margin-left: 5px; color:white; border:none; border-radius:3px; cursor:pointer; }
     .list-item-actions button.delete-btn, .mgmt-list-item-actions button.delete-btn { background-color: #d9534f; }
     .list-item-actions button.delete-btn:hover, .mgmt-list-item-actions button.delete-btn:hover { background-color: #c9302c; }
@@ -278,7 +278,7 @@
     <div id="mynetwork"></div>
     <div id="legendContainer">
         <div class="legend-section" id="nodeLegend"><h3>Node Departments (Fill)</h3></div>
-        <div class="legend-section" id="roleLegend"><h3>Node Roles (Outline & Shape)</h3></div>
+        <div class="legend-section" id="roleLegend"><h3>Node Roles (Shape & Outline)</h3></div>
         <div class="legend-section" id="edgeLegend"><h3>Relationship Types (Color)</h3></div>
     </div>
   </div>
@@ -309,8 +309,8 @@
     var visNetworkOptions = {
         edges:{
             font:{size:10},
-            width: 2, 
-            smooth: { 
+            width: 2,
+            smooth: {
                 enabled: true,
                 type: "dynamic", // Default smooth type
                 roundness: 0.5   // Default roundness if applicable
@@ -318,9 +318,9 @@
         },
         nodes:{
             shape:'circle',
-            size: 20, 
+            size: 20,
             font:{
-                size: 14, 
+                size: 14,
                 face:'Arial'
             },
             widthConstraint:{maximum:150}, heightConstraint:{minimum:40},
@@ -338,7 +338,7 @@
             }
         },
         interaction:{dragNodes:true,zoomView:true,hover:true},
-        groups:{} 
+        groups:{}
     };
 
     // --- Initial Data Definitions ---
@@ -368,26 +368,26 @@
 
     function getInitialVisNetworkOptions() {
         let initialOptions = {
-             edges:{ 
-                font:{size:10}, 
-                width: 2, 
-                smooth: { 
-                    enabled: true, 
-                    type: "dynamic", 
-                    roundness: 0.5 
-                } 
+             edges:{
+                font:{size:10},
+                width: 2,
+                smooth: {
+                    enabled: true,
+                    type: "dynamic",
+                    roundness: 0.5
+                }
             },
              nodes:{ shape:'circle', size: 20, font:{ size: 14, face:'Arial' }, widthConstraint:{maximum:150}, heightConstraint:{minimum:40}, borderWidth: 2 },
-             physics:{ 
-                enabled:true, 
-                solver:'barnesHut', 
-                barnesHut:{ springConstant: 0.04, centralGravity: 0.12, gravitationalConstant: -3000, springLength: 150, damping: 0.09 } 
+             physics:{
+                enabled:true,
+                solver:'barnesHut',
+                barnesHut:{ springConstant: 0.04, centralGravity: 0.12, gravitationalConstant: -3000, springLength: 150, damping: 0.09 }
             },
              interaction:{dragNodes:true,zoomView:true,hover:true},
              groups:{}
-        }; 
+        };
          const initialGroupsData = getInitialNodeGroupStyles();
-         initialOptions.groups = {}; 
+         initialOptions.groups = {};
          Object.keys(initialGroupsData).forEach(k => {
              const g = initialGroupsData[k];
              if (g && g.color) { initialOptions.groups[k] = { color: { background: g.color.background, border: g.color.border } }; }
@@ -415,8 +415,8 @@
 
             initializePhysicsControls();
             initializeAppearanceControls();
-            setupControlsAndUI(); 
-            loadDefaultDataset(); 
+            setupControlsAndUI();
+            loadDefaultDataset();
 
         } catch (e) {
             console.error('Init Error:', e);
@@ -450,15 +450,15 @@
             el = document.getElementById('btnSaveJsonData'); if(el) el.addEventListener('click', handleSaveJsonData);
             el = document.getElementById('btnLoadJsonDataProxy'); if(el) el.addEventListener('click', function() { var fin = document.getElementById('fileLoadJsonInput'); if(fin) fin.click(); });
             el = document.getElementById('fileLoadJsonInput'); if(el) el.addEventListener('change', handleLoadJsonFileSelect);
-            el = document.getElementById('btnSaveTextData'); if(el) el.addEventListener('click', handleSaveTextData); 
+            el = document.getElementById('btnSaveTextData'); if(el) el.addEventListener('click', handleSaveTextData);
             el = document.getElementById('btnLoadTextDataProxy'); if(el) el.addEventListener('click', function() { var fin=document.getElementById('fileLoadTextInput'); if(fin) fin.click(); });
-            // CORRECTED LINE BELOW:
-            el = document.getElementById('fileLoadTextInput'); if(el) el.addEventListener('change', handleLoadJsonFileSelect); 
+            // CORRECTED LINE BELOW (If needed, ensure it calls the correct handler):
+            el = document.getElementById('fileLoadTextInput'); if(el) el.addEventListener('change', handleLoadJsonFileSelect);
             el = document.getElementById('btnExportImageWithLegend'); if(el) el.addEventListener('click', exportDiagramWithLegend);
 
             // Appearance/Physics Controls & Buttons
             el = document.getElementById('physicsEnabledToggle'); if(el) el.addEventListener('change', togglePhysicsInputsActiveState);
-            el = document.getElementById('edgeSpreadFactorInput'); if (el) { el.addEventListener('change', handleEdgeSpreadChange); } 
+            el = document.getElementById('edgeSpreadFactorInput'); if (el) { el.addEventListener('change', handleEdgeSpreadChange); }
             el = document.getElementById('edgeSmoothTypeInput'); if(el) el.addEventListener('change', handleEdgeSmoothTypeChange);
             el = document.getElementById('btnApplyPhysicsChanges'); if (el) { el.addEventListener('click', applyPhysicsChanges); }
             el = document.getElementById('btnApplyAppearanceChanges'); if (el) { el.addEventListener('click', applyAppearanceChanges); }
@@ -491,7 +491,7 @@
 
      function initializePhysicsControls() {
          console.log("Initializing physics controls");
-         const initialOptions = getInitialVisNetworkOptions(); 
+         const initialOptions = getInitialVisNetworkOptions();
          if (!initialOptions || !initialOptions.physics || !initialOptions.physics.barnesHut) {
              console.error("Could not get initial physics defaults for controls!"); return;
          }
@@ -504,28 +504,28 @@
              document.getElementById('physicsRepulsionInput').value = physicsDefaults.gravitationalConstant;
              document.getElementById('physicsSpringLengthInput').value = physicsDefaults.springLength;
              document.getElementById('physicsDampingInput').value = physicsDefaults.damping;
-             togglePhysicsInputsActiveState(); 
+             togglePhysicsInputsActiveState();
              console.log("Physics controls initialized. Enabled:", physicsEnabled, "Values:", physicsDefaults);
          } catch (e) { console.error("Error initializing physics controls elements:", e); }
      }
 
       function initializeAppearanceControls() {
          console.log("Initializing appearance controls");
-         const initialOpts = getInitialVisNetworkOptions(); 
+         const initialOpts = getInitialVisNetworkOptions();
           if (!initialOpts || !initialOpts.nodes || !initialOpts.nodes.font || !initialOpts.edges || !initialOpts.edges.smooth) {
               console.error("Could not get initial appearance defaults for controls!"); return;
           }
          const nodeDefaults = initialOpts.nodes;
          const edgeDefaults = initialOpts.edges;
          try {
-            document.getElementById('edgeSpreadFactorInput').value = edgeSpreadFactor; 
+            document.getElementById('edgeSpreadFactorInput').value = edgeSpreadFactor;
             document.getElementById('appearanceNodeSizeInput').value = nodeDefaults.size;
             document.getElementById('appearanceNodeFontSizeInput').value = nodeDefaults.font.size;
             document.getElementById('appearanceEdgeBaseWidthInput').value = edgeDefaults.width;
-            
+
             document.getElementById('edgeSmoothTypeInput').value = edgeDefaults.smooth.type || "dynamic";
             document.getElementById('edgeSmoothRoundnessInput').value = edgeDefaults.smooth.roundness || 0.5;
-            handleEdgeSmoothTypeChange(); 
+            handleEdgeSmoothTypeChange();
 
             console.log("Appearance controls initialized.");
          } catch (e) { console.error("Error initializing appearance controls elements:", e); }
@@ -534,7 +534,7 @@
     function togglePhysicsInputsActiveState() {
         const physicsEnabled = document.getElementById('physicsEnabledToggle').checked;
         const physicsInputs = [
-            'physicsSpringConstantInput', 'physicsGravityInput', 
+            'physicsSpringConstantInput', 'physicsGravityInput',
             'physicsRepulsionInput', 'physicsSpringLengthInput', 'physicsDampingInput'
         ];
         physicsInputs.forEach(id => {
@@ -542,12 +542,12 @@
             if (el) el.disabled = !physicsEnabled;
         });
     }
-    
+
     function handleEdgeSmoothTypeChange() {
         const smoothType = document.getElementById('edgeSmoothTypeInput').value;
         const roundnessContainer = document.getElementById('edgeSmoothRoundnessContainer');
-        const typesWithRoundness = ['curvedCW', 'curvedCCW', 'cubicBezier']; 
-        
+        const typesWithRoundness = ['curvedCW', 'curvedCCW', 'cubicBezier'];
+
         if (typesWithRoundness.includes(smoothType)) {
             roundnessContainer.classList.remove('hidden');
         } else {
@@ -565,19 +565,19 @@
                 edgeTypeStyles = getInitialEdgeTypeStyles();
                 populateEdgeTypeDropdown(); renderRelTypeMgmtList(); populateEdgeLegend();
             }
-            if (!nodeGroupStyles['leadership'] || !nodeGroupStyles['general']) { 
+            if (!nodeGroupStyles['leadership'] || !nodeGroupStyles['general']) {
                 console.warn("Default node group(s) missing. Re-initializing.");
-                nodeGroupStyles = getInitialNodeGroupStyles(); 
-                visNetworkOptions.groups = getInitialVisNetworkOptions().groups; 
-                if(network) network.setOptions({ groups: deepCopy(visNetworkOptions.groups) }); 
+                nodeGroupStyles = getInitialNodeGroupStyles();
+                visNetworkOptions.groups = getInitialVisNetworkOptions().groups;
+                if(network) network.setOptions({ groups: deepCopy(visNetworkOptions.groups) });
                 populateNodeGroupDropdown(); renderNodeGroupMgmtList(); populateNodeLegend();
             }
 
             const buddyId = 'node_' + nextNodeIdCounter++;
             const johnId = 'node_' + nextNodeIdCounter++;
             const sallyId = 'node_' + nextNodeIdCounter++;
-            const nodeDistance = 150; 
-            const nodeHeight = 130;   
+            const nodeDistance = 150;
+            const nodeHeight = 130;
 
             addNodeInternal('Sally', 'general', 'ic', sallyId, nodeDistance / 2, 0);
             addNodeInternal('Buddy', 'general', 'ic', buddyId, 0, nodeHeight);
@@ -589,7 +589,7 @@
 
             console.log("Default dataset loaded.");
             renderNodeList(); renderEdgeList(); updateNodeSelectors();
-            setTimeout(reapplySmoothToAllEdges, 100); 
+            setTimeout(reapplySmoothToAllEdges, 100);
         } catch (e) {
             console.error("Error loading default dataset:", e);
             alert("An error occurred while loading the default data.");
@@ -651,7 +651,7 @@
             edgeTypeStyles = getInitialEdgeTypeStyles();
             nodeRoleStyles = getInitialNodeRoleStyles();
             nextNodeIdCounter = 1;
-            edgeSpreadFactor = 0.35; 
+            edgeSpreadFactor = 0.35;
 
             editingNodeId = null; editingEdgeId = null; editingNodeGroupKeyMgmt = null; editingRelTypeIdMgmt = null; editingNodeRoleKeyMgmt = null;
             cancelEditNode(); cancelEditEdge(); cancelEditNodeGroupMgmt(); cancelEditRelTypeMgmt(); cancelEditNodeRoleMgmt();
@@ -662,10 +662,10 @@
             if (newRelLabelAlignDropdown) newRelLabelAlignDropdown.disabled = true;
 
             let cleanInitialOptions = getInitialVisNetworkOptions();
-            visNetworkOptions = deepCopy(cleanInitialOptions); 
+            visNetworkOptions = deepCopy(cleanInitialOptions);
 
             if(network) {
-                network.setOptions(cleanInitialOptions); 
+                network.setOptions(cleanInitialOptions);
                 console.log("Network options reset.");
             } else { console.error("Network object not available during reset!"); }
 
@@ -674,7 +674,7 @@
 
             populateNodeGroupDropdown(); populateEdgeTypeDropdown(); populateNodeRoleDropdown();
             renderAllListsAndLegends(); updateNodeSelectors();
-            loadDefaultDataset(); 
+            loadDefaultDataset();
             console.log("Diagram reset to defaults.");
             alert("Diagram has been reset.");
         } catch(e) {
@@ -683,57 +683,57 @@
         }
     }
 
-    function handleSaveJsonData() { 
-        console.log("handleSaveJsonData called"); 
-        try { 
-            var dataToSave = { 
-                fileHeader: { appName: "InteractiveVisMap", version: "1.9.2", savedDateUTC: new Date().toISOString() }, 
-                nextNodeIdCounter: nextNodeIdCounter, 
-                edgeSpreadFactor: edgeSpreadFactor, 
-                appearanceSettings: { 
-                    nodeSize: visNetworkOptions.nodes.size, 
-                    nodeFontSize: visNetworkOptions.nodes.font.size, 
+    function handleSaveJsonData() {
+        console.log("handleSaveJsonData called");
+        try {
+            var dataToSave = {
+                fileHeader: { appName: "InteractiveVisMap", version: "1.9.3", savedDateUTC: new Date().toISOString() }, // Version updated
+                nextNodeIdCounter: nextNodeIdCounter,
+                edgeSpreadFactor: edgeSpreadFactor,
+                appearanceSettings: {
+                    nodeSize: visNetworkOptions.nodes.size,
+                    nodeFontSize: visNetworkOptions.nodes.font.size,
                     edgeBaseWidth: visNetworkOptions.edges.width,
-                    edgeSmooth: deepCopy(visNetworkOptions.edges.smooth) 
-                }, 
-                physicsSettings: deepCopy(visNetworkOptions.physics), 
-                nodeGroupStyles: nodeGroupStyles, 
-                edgeTypeStyles: edgeTypeStyles, 
-                nodeRoleStyles: nodeRoleStyles, 
-                nodes: nodes.get({ fields: ['id', 'label', 'group', 'role', 'shape', 'borderWidth', 'color', 'title', 'originalLabel', 'x', 'y'] }), 
-                edges: edges.get({ fields: ['id', 'from', 'to', 'label', 'font', 'color', 'arrows', 'smooth', 'width', 'strength', 'physics', 'visjs_edge_type_id'] }) 
-            }; 
-            var jsonData = JSON.stringify(dataToSave, null, 2); 
-            var blob = new Blob([jsonData], { type: 'application/json' }); 
-            var url = URL.createObjectURL(blob); 
-            var a = document.createElement('a'); 
-            a.href = url; 
-            var now = new Date(); 
-            a.download = `vis_map_data_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.json`; 
-            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); 
-            console.log("JSON Data saved."); 
-        } catch (e) { console.error("Error saving JSON data:", e); alert("Error saving JSON. See console."); } 
+                    edgeSmooth: deepCopy(visNetworkOptions.edges.smooth)
+                },
+                physicsSettings: deepCopy(visNetworkOptions.physics),
+                nodeGroupStyles: nodeGroupStyles,
+                edgeTypeStyles: edgeTypeStyles,
+                nodeRoleStyles: nodeRoleStyles,
+                nodes: nodes.get({ fields: ['id', 'label', 'group', 'role', 'shape', 'borderWidth', 'color', 'title', 'originalLabel', 'x', 'y'] }),
+                edges: edges.get({ fields: ['id', 'from', 'to', 'label', 'font', 'color', 'arrows', 'smooth', 'width', 'strength', 'physics', 'visjs_edge_type_id'] })
+            };
+            var jsonData = JSON.stringify(dataToSave, null, 2);
+            var blob = new Blob([jsonData], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            var now = new Date();
+            a.download = `vis_map_data_${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.json`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            console.log("JSON Data saved.");
+        } catch (e) { console.error("Error saving JSON data:", e); alert("Error saving JSON. See console."); }
     }
 
     function handleLoadJsonFileSelect(event) { // This function now handles BOTH JSON and Text
-        console.log("handleLoadJsonFileSelect or TextFileSelect called"); 
-        var file = event.target.files[0]; 
-        if (!file) return; 
-        
+        console.log("handleLoadJsonFileSelect or TextFileSelect called");
+        var file = event.target.files[0];
+        if (!file) return;
+
         if (file.type.match('application/json')) {
-            var reader = new FileReader(); 
-            reader.onload = function(e) { 
-                console.log("File loaded, parsing JSON..."); 
-                try { 
-                    var loadedData = JSON.parse(e.target.result); 
-                    console.log("Parsed loaded data:", loadedData); 
-                    if (!loadedData || !loadedData.fileHeader || !loadedData.fileHeader.appName || loadedData.fileHeader.appName !== "InteractiveVisMap" || !loadedData.nodes || !loadedData.edges || !loadedData.nodeGroupStyles || !loadedData.edgeTypeStyles || !loadedData.nodeRoleStyles ) { 
-                        alert('Invalid/corrupted data file header or core data missing.'); 
-                        console.error("Validation fail: Core structure."); 
-                        event.target.value = null; return; 
-                    } 
-                    if (!confirm("Loading JSON replaces current. OK?")) { 
-                        event.target.value = null; return; 
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                console.log("File loaded, parsing JSON...");
+                try {
+                    var loadedData = JSON.parse(e.target.result);
+                    console.log("Parsed loaded data:", loadedData);
+                    if (!loadedData || !loadedData.fileHeader || !loadedData.fileHeader.appName || loadedData.fileHeader.appName !== "InteractiveVisMap" || !loadedData.nodes || !loadedData.edges || !loadedData.nodeGroupStyles || !loadedData.edgeTypeStyles || !loadedData.nodeRoleStyles ) {
+                        alert('Invalid/corrupted data file header or core data missing.');
+                        console.error("Validation fail: Core structure.");
+                        event.target.value = null; return;
+                    }
+                    if (!confirm("Loading JSON replaces current. OK?")) {
+                        event.target.value = null; return;
                     }
                     nodes.clear(); edges.clear(); console.log("Cleared existing data.");
                     nextNodeIdCounter = loadedData.nextNodeIdCounter || Math.max(1, ...(loadedData.nodes || []).map(n => parseInt(String(n.id||"").replace('node_',''),10) || 0)) + 1 || 1;
@@ -745,7 +745,7 @@
 
                     const initialDefaults = getInitialVisNetworkOptions();
                     visNetworkOptions.physics = deepCopy(loadedData.physicsSettings || initialDefaults.physics);
-                    
+
                     const defaultAppearance = { nodeSize: initialDefaults.nodes.size, nodeFontSize: initialDefaults.nodes.font.size, edgeBaseWidth: initialDefaults.edges.width, edgeSmooth: deepCopy(initialDefaults.edges.smooth) };
                     const loadedAppearance = loadedData.appearanceSettings || defaultAppearance;
 
@@ -758,43 +758,43 @@
                     Object.keys(nodeGroupStyles).forEach(k => { if(nodeGroupStyles.hasOwnProperty(k) && nodeGroupStyles[k] && nodeGroupStyles[k].color){ visNetworkOptions.groups[k] = { color: { background: nodeGroupStyles[k].color.background, border: nodeGroupStyles[k].color.border } }; }});
 
                     if(network){
-                         let optionsToApply = { 
-                            physics: deepCopy(visNetworkOptions.physics), 
-                            nodes: { size: visNetworkOptions.nodes.size, font: { size: visNetworkOptions.nodes.font.size } }, 
-                            edges: { width: visNetworkOptions.edges.width, smooth: deepCopy(visNetworkOptions.edges.smooth) }, 
-                            groups: deepCopy(visNetworkOptions.groups) 
+                         let optionsToApply = {
+                            physics: deepCopy(visNetworkOptions.physics),
+                            nodes: { size: visNetworkOptions.nodes.size, font: { size: visNetworkOptions.nodes.font.size } },
+                            edges: { width: visNetworkOptions.edges.width, smooth: deepCopy(visNetworkOptions.edges.smooth) },
+                            groups: deepCopy(visNetworkOptions.groups)
                         };
                         network.setOptions(optionsToApply);
                         console.log("Network opts updated from JSON.");
                     } else {console.error("Network not initialized in LoadJSON!");}
 
-                    initializePhysicsControls(); 
+                    initializePhysicsControls();
                     initializeAppearanceControls();
 
                     var nodesToLoad = (loadedData.nodes || []).map(n => { if (n.role && nodeRoleStyles[n.role]) { n.borderWidth = 3; n.color = n.color || {}; n.color.border = nodeRoleStyles[n.role].color; n.shape = nodeRoleStyles[n.role].shape || 'circle'; } else { n.role = 'ic'; const defaultRole = nodeRoleStyles['ic'] || { color: '#CCCCCC', shape: 'circle' }; n.borderWidth = 3; n.color = n.color || {}; n.color.border = defaultRole.color; n.shape = defaultRole.shape; } if (!n.group || !nodeGroupStyles[n.group]) n.group = 'general'; if (n.color && n.color.background) delete n.color.background; return n; });
                     if (nodesToLoad.length > 0) nodes.add(nodesToLoad);
 
                     var edgesToLoad = (loadedData.edges || []).map(e => { e.strength = e.strength || 'medium'; e.width = getEdgeWidthFromStrength(e.strength); if (!e.physics || typeof e.physics.length !== 'number') { e.physics = { length: undefined }; }
-                        e.smooth = e.smooth || visNetworkOptions.edges.smooth; 
+                        e.smooth = e.smooth || visNetworkOptions.edges.smooth;
                         return e;
                     });
                     if (edgesToLoad.length > 0) edges.add(edgesToLoad);
 
                     console.log("Loaded data to DataSets.");
                     setTimeout(function(){ console.log("Attempting UI refresh post-JSON load."); try{populateNodeGroupDropdown();populateEdgeTypeDropdown();populateNodeRoleDropdown();renderAllListsAndLegends();updateNodeSelectors();reapplySmoothToAllEdges();console.log("UI refreshed post-JSON load.");alert('JSON Data loaded!')}catch(uiError){console.error("Err UI refresh post-JSON:",uiError);alert("Data loaded, UI refresh issue.")}},50);
-                } catch (parseError) { 
+                } catch (parseError) {
                     console.error("Err parsing JSON:",parseError);
                     alert('Error parsing JSON file.');
-                } finally { 
-                    event.target.value = null; 
+                } finally {
+                    event.target.value = null;
                     console.log("JSON File input reset.");
                 }
-            }; 
+            };
             reader.onerror = function(){
                 console.error("FileReader err (JSON):",reader.error);
                 alert("Err reading file.");
                 event.target.value=null;
-            }; 
+            };
             reader.readAsText(file);
         } else if (file.type.match('text/plain') || file.name.endsWith('.txt')) {
             var reader = new FileReader();
@@ -809,7 +809,7 @@
                     console.error("Error processing text file:", err);
                     alert("Error processing text file. See console.");
                 } finally {
-                    event.target.value = null; 
+                    event.target.value = null;
                 }
             };
             reader.onerror = function() {
@@ -824,7 +824,7 @@
             return;
         }
     }
-    
+
     function handleSaveTextData() {
         console.log("handleSaveTextData called");
         try {
@@ -838,11 +838,11 @@
             });
 
             textContent += "\nEDGES\n";
-            textContent += "fromNodeId,toNodeId,edgeTypeId,strength\n"; 
+            textContent += "fromNodeId,toNodeId,edgeTypeId,strength\n";
             edges.get({ fields: ['from', 'to', 'visjs_edge_type_id', 'strength'] }).forEach(edge => {
                 textContent += `${edge.from},${edge.to},${edge.visjs_edge_type_id || 'unknown'},${edge.strength || 'medium'}\n`;
             });
-            
+
             textContent += "\nNODE_GROUPS\n";
             textContent += "key,name,colorHex\n";
             Object.keys(nodeGroupStyles).forEach(key => {
@@ -886,14 +886,14 @@
         try {
             nodes.clear();
             edges.clear();
-            
+
             // Temporarily store loaded definitions to avoid conflicts if they are used before full parse
             let loadedNodeGroups = {};
             let loadedNodeRoles = {};
             let loadedEdgeTypes = [];
 
             const lines = text.split('\n');
-            let mode = null; 
+            let mode = null;
             let tempNodeIdCounter = 1;
 
             lines.forEach(line => {
@@ -914,7 +914,7 @@
                         loadedNodeGroups[key] = {
                             name: parts[1],
                             color: { background: parts[2], border: darkenColor(parts[2], 30) },
-                            isDeletable: (key !== 'general' && key !== (getInitialNodeGroupStyles().leadership ? Object.keys(getInitialNodeGroupStyles()).find(k => getInitialNodeGroupStyles()[k].name === 'Leadership') : 'leadership') ) 
+                            isDeletable: (key !== 'general' && key !== (getInitialNodeGroupStyles().leadership ? Object.keys(getInitialNodeGroupStyles()).find(k => getInitialNodeGroupStyles()[k].name === 'Leadership') : 'leadership') )
                         };
                     }
                 } else if (mode === "NODE_ROLES") {
@@ -926,7 +926,7 @@
                             name: parts[1],
                             color: parts[2],
                             shape: parts[3],
-                            isDeletable: (key !== 'ic') 
+                            isDeletable: (key !== 'ic')
                         };
                     }
                 } else if (mode === "RELATIONSHIP_TYPES") {
@@ -958,7 +958,7 @@
 
 
                 if (mode === "NODES") {
-                    if (line.startsWith("id,originalLabel")) return; 
+                    if (line.startsWith("id,originalLabel")) return;
                     const parts = line.split(',');
                     if (parts.length >= 4) {
                         const nodeId = parts[0];
@@ -968,10 +968,10 @@
                                 tempNodeIdCounter = numPart + 1;
                             }
                         }
-                        addNodeInternal(parts[1], parts[2], parts[3], nodeId); 
+                        addNodeInternal(parts[1], parts[2], parts[3], nodeId);
                     }
                 } else if (mode === "EDGES") {
-                    if (line.startsWith("fromNodeId,toNodeId")) return; 
+                    if (line.startsWith("fromNodeId,toNodeId")) return;
                     const parts = line.split(',');
                     if (parts.length >= 4) {
                         const edgeTypeInfo = edgeTypeStyles.find(et => et.id === parts[2]);
@@ -985,11 +985,11 @@
                     }
                 }
             });
-            
+
             nextNodeIdCounter = Math.max(nextNodeIdCounter, tempNodeIdCounter);
 
             populateNodeGroupDropdown(); populateNodeRoleDropdown(); populateEdgeTypeDropdown();
-            renderAllListsAndLegends(); updateNodeSelectors(); reapplySmoothToAllEdges(); 
+            renderAllListsAndLegends(); updateNodeSelectors(); reapplySmoothToAllEdges();
 
             alert("Basic text data loaded. Some settings (positions, physics, detailed appearance) are not included in text format.");
         } catch (e) {
@@ -1006,7 +1006,7 @@
             if (edgeSpreadFactor !== newFactor) {
                 edgeSpreadFactor = newFactor;
                 console.log("Edge Spread Factor (for parallel edges) variable updated to:", edgeSpreadFactor);
-                 reapplySmoothToAllEdges(); 
+                 reapplySmoothToAllEdges();
             }
         } else {
             alert("Invalid spread factor (must be 0-1).");
@@ -1039,19 +1039,19 @@
             } else {
                 newPhysicsConfig = { enabled: false };
             }
-            
+
             visNetworkOptions.physics = deepCopy(newPhysicsConfig);
             network.setOptions({ physics: newPhysicsConfig });
             console.log("Physics options updated in network. Enabled: " + physicsEnabled);
-            
-            if (physicsEnabled && network.physics.options.enabled) { 
-                 network.setOptions({ physics: { enabled: false }}); 
-                 setTimeout(() => { 
-                    network.setOptions({ physics: { enabled: true }}); 
-                    console.log("Physics simulation restarted."); 
+
+            if (physicsEnabled && network.physics.options.enabled) {
+                 network.setOptions({ physics: { enabled: false }});
+                 setTimeout(() => {
+                    network.setOptions({ physics: { enabled: true }});
+                    console.log("Physics simulation restarted.");
                 }, 50);
             }
-            togglePhysicsInputsActiveState(); 
+            togglePhysicsInputsActiveState();
             alert("Physics settings applied.");
         } catch (e) { console.error("Error applying physics changes:", e); alert("Error applying physics settings."); initializePhysicsControls(); }
     }
@@ -1060,7 +1060,7 @@
         if (!network) { console.error("ApplyAppearance: Network not ready."); return; }
         console.log("Applying appearance changes...");
         try {
-             const newSpreadFactor = parseFloat(document.getElementById('edgeSpreadFactorInput').value); 
+             const newSpreadFactor = parseFloat(document.getElementById('edgeSpreadFactorInput').value);
              const newSmoothType = document.getElementById('edgeSmoothTypeInput').value;
              const newSmoothRoundness = parseFloat(document.getElementById('edgeSmoothRoundnessInput').value);
              const newNodeSize = parseInt(document.getElementById('appearanceNodeSizeInput').value, 10);
@@ -1075,7 +1075,7 @@
              if (isNaN(newEdgeBaseWidth) || newEdgeBaseWidth < 0.5) { isValid = false; errorMsg += "- Edge Base Width must be >= 0.5\n"; document.getElementById('appearanceEdgeBaseWidthInput').value = visNetworkOptions.edges.width; }
              if (!isValid) { alert(errorMsg); return; }
 
-             edgeSpreadFactor = newSpreadFactor; 
+             edgeSpreadFactor = newSpreadFactor;
              visNetworkOptions.nodes.size = newNodeSize;
              visNetworkOptions.nodes.font.size = newNodeFontSize;
              visNetworkOptions.edges.width = newEdgeBaseWidth;
@@ -1083,16 +1083,16 @@
              if (['curvedCW', 'curvedCCW', 'cubicBezier'].includes(newSmoothType)) {
                  visNetworkOptions.edges.smooth.roundness = newSmoothRoundness;
              } else {
-                 delete visNetworkOptions.edges.smooth.roundness; 
+                 delete visNetworkOptions.edges.smooth.roundness;
              }
              visNetworkOptions.edges.smooth.enabled = visNetworkOptions.edges.smooth.enabled !== false;
 
 
              network.setOptions({
                  nodes: { size: newNodeSize, font: { size: newNodeFontSize } },
-                 edges: { 
+                 edges: {
                      width: newEdgeBaseWidth,
-                     smooth: deepCopy(visNetworkOptions.edges.smooth) 
+                     smooth: deepCopy(visNetworkOptions.edges.smooth)
                  }
              });
              console.log("Base appearance options set on network.");
@@ -1103,8 +1103,8 @@
                  if (edge.width !== newWidth) { edgeUpdates.push({ id: edge.id, width: newWidth }); }
              });
              if (edgeUpdates.length > 0) { edges.update(edgeUpdates); console.log(`Recalculated and updated width for ${edgeUpdates.length} edges.`); }
-             
-             reapplySmoothToAllEdges(); 
+
+             reapplySmoothToAllEdges();
              console.log("Appearance options updated successfully.");
              alert("Appearance settings applied.");
          } catch (e) { console.error("Error applying appearance changes:", e); alert("Error applying appearance settings."); initializeAppearanceControls(); }
@@ -1124,7 +1124,7 @@
         const numEdges = allEdgesBetweenNodes.length;
 
         if (numEdges === 0) {
-            return; 
+            return;
         } else if (numEdges === 1) {
             const edge = allEdgesBetweenNodes[0];
             const singleEdgeSmoothOpt = deepCopy(visNetworkOptions.edges.smooth) || { enabled: true, type: "dynamic", roundness: 0.5 };
@@ -1133,7 +1133,7 @@
             if (JSON.stringify(edge.smooth) !== JSON.stringify(singleEdgeSmoothOpt)) {
                  updates.push({ id: edge.id, smooth: singleEdgeSmoothOpt });
             }
-        } else { 
+        } else {
             const maxRoundness = 0.85;
             allEdgesBetweenNodes.forEach((edge, index) => {
                 let smoothOpt;
@@ -1141,9 +1141,9 @@
                 let currentRoundness = (pairIndex === 0) ? edgeSpreadFactor : Math.min(maxRoundness, edgeSpreadFactor + pairIndex * (edgeSpreadFactor * 0.75));
                 currentRoundness = Math.max(0.05, currentRoundness);
 
-                if (index % 2 === 0) { 
+                if (index % 2 === 0) {
                     smoothOpt = { enabled: true, type: 'curvedCW', roundness: currentRoundness, forceDirection: 'none' };
-                } else { 
+                } else {
                     smoothOpt = { enabled: true, type: 'curvedCCW', roundness: currentRoundness, forceDirection: 'none' };
                 }
 
@@ -1217,65 +1217,192 @@
     function renderNodeList(){var d=document.getElementById('nodeList');if(!d)return;d.innerHTML='';var allN=nodes?nodes.get({order:'originalLabel'}):[];if(allN.length===0){d.innerHTML='<em>No people added.</em>';return}allN.forEach(n=>{var i=document.createElement('div');i.className='list-item';var gI=(n.group&&nodeGroupStyles[n.group])?nodeGroupStyles[n.group]:nodeGroupStyles['general'];var gN=gI?gI.name:'N/A';var rI=(n.role&&nodeRoleStyles[n.role])?nodeRoleStyles[n.role]:nodeRoleStyles['ic'];var rN=rI?rI.name:'N/A (Default)';var dispL=n.originalLabel||n.label.replace(/\n/g,' ');var ct=document.createElement('span');ct.className='list-item-content';ct.innerHTML=`<strong>${dispL}</strong> <small>(Dept: ${gN}, Role: ${rN})</small>`;i.appendChild(ct);var ac=document.createElement('span');ac.className='list-item-actions';var edB=document.createElement('button');edB.textContent='Edit';edB.className='edit-btn';edB.onclick=function(){prepareEditNode(n.id)};ac.appendChild(edB);var dlB=document.createElement('button');dlB.textContent='X';dlB.className='delete-btn';dlB.onclick=function(){deleteNode(n.id)};ac.appendChild(dlB);i.appendChild(ac);d.appendChild(i)})}
     function renderEdgeList(){var d=document.getElementById('edgeList');if(!d)return;d.innerHTML='';var allE=edges?edges.get({order:'id'}):[];if(allE.length===0){d.innerHTML='<em>No relationships added.</em>';return}allE.forEach(e=>{var fN=nodes.get(e.from),tN=nodes.get(e.to);var i=document.createElement('div');i.className='list-item';var fL=fN?(fN.originalLabel||fN.label.replace(/\n/g,' ')):'?';var tL=tN?(tN.originalLabel||tN.label.replace(/\n/g,' ')):'?';var eT=edgeTypeStyles.find(t=>t.id===e.visjs_edge_type_id);var typeLabelForList=eT?eT.label:(e.label||'N/A'); var showLabelOnDiagramInList = (e.label !== undefined && e.label !== null); var listLabelSuffix = showLabelOnDiagramInList ? '' : ' (hidden)'; let arS='—'; if (e.arrows) { if (e.arrows.from && e.arrows.from.enabled && e.arrows.to && e.arrows.to.enabled) arS='↔'; else if (e.arrows.to && e.arrows.to.enabled) arS='→'; else if (e.arrows.from && e.arrows.from.enabled) arS='←'; } else if (eT) { if(eT.arrowStyle==='to')arS='→';else if(eT.arrowStyle==='bi')arS='↔'; } var strengthLabel = e.strength ? ` (${e.strength.charAt(0).toUpperCase() + e.strength.slice(1)})` : ''; var ct=document.createElement('span');ct.className='list-item-content';ct.innerHTML=`<strong>${fL}</strong> ${arS} <strong>${tL}</strong> <small>(${typeLabelForList}${listLabelSuffix}${strengthLabel})</small>`;i.appendChild(ct);var ac=document.createElement('span');ac.className='list-item-actions';var edB=document.createElement('button');edB.textContent='Edit';edB.className='edit-btn';edB.onclick=function(){prepareEditEdge(e.id)};ac.appendChild(edB);var dlB=document.createElement('button');dlB.textContent='X';dlB.className='delete-btn';dlB.onclick=function(){deleteEdge(e.id)};ac.appendChild(dlB);i.appendChild(ac);d.appendChild(i)})}
     function renderNodeGroupMgmtList(){var c=document.getElementById('nodeGroupMgmtList');if(!c)return;c.innerHTML='';Object.keys(nodeGroupStyles).sort((a,b)=>nodeGroupStyles[a].name.localeCompare(nodeGroupStyles[b].name)).forEach(k=>{var g=nodeGroupStyles[k];var i=document.createElement('div');i.className='mgmt-list-item';var ct=document.createElement('span');ct.className='mgmt-list-item-content';var sw=document.createElement('span');sw.className='mgmt-list-color-swatch';sw.style.backgroundColor=g.color.background;sw.style.borderColor=g.color.border;ct.appendChild(sw);ct.append(`${g.name} (Key: ${k})`);i.appendChild(ct);var ac=document.createElement('span');ac.className='mgmt-list-item-actions'; var edB=document.createElement('button');edB.textContent='Edit';edB.className='edit-btn';edB.onclick=function(){prepareEditNodeGroupMgmt(k)};ac.appendChild(edB); if(g.isDeletable!==false){var dlB=document.createElement('button');dlB.textContent='Del';dlB.className='delete-btn';dlB.onclick=function(){handleDeleteNodeGroupMgmt(k)};ac.appendChild(dlB)}i.appendChild(ac);c.appendChild(i)})}
-    function renderNodeRoleMgmtList() { var container = document.getElementById('nodeRoleMgmtList'); if (!container) return; container.innerHTML = ''; Object.keys(nodeRoleStyles).sort((a,b)=>nodeRoleStyles[a].name.localeCompare(nodeRoleStyles[b].name)).forEach(key => { var role = nodeRoleStyles[key]; var item = document.createElement('div'); item.className = 'mgmt-list-item'; var content = document.createElement('span'); content.className = 'mgmt-list-item-content'; var swatch = document.createElement('span'); swatch.className = 'mgmt-list-color-swatch'; swatch.style.backgroundColor = role.color; swatch.style.border = '1px solid #555'; var shapeDisplay = document.createElement('span'); shapeDisplay.className = 'legend-node-shape-box'; shapeDisplay.style.borderColor = role.color; shapeDisplay.style.backgroundColor = 'transparent'; shapeDisplay.style.borderWidth = '2px'; if (role.shape === 'circle' || role.shape === 'ellipse') shapeDisplay.style.borderRadius = '50%'; else if (role.shape === 'box' || role.shape === 'square') shapeDisplay.style.borderRadius = '0'; else if (role.shape === 'diamond') { shapeDisplay.style.transform = 'rotate(45deg)'; shapeDisplay.style.borderRadius = '0'; } else if (role.shape === 'star') { shapeDisplay.innerHTML = '★'; shapeDisplay.style.border = 'none'; shapeDisplay.style.color = role.color; shapeDisplay.style.fontSize = '16px'; shapeDisplay.style.lineHeight = '16px'; shapeDisplay.style.textAlign = 'center';} else shapeDisplay.style.borderRadius = '50%'; content.appendChild(swatch); content.appendChild(shapeDisplay); content.append(` ${role.name} (Key: ${key})`); item.appendChild(content); var actions = document.createElement('span'); actions.className = 'mgmt-list-item-actions'; var editButton = document.createElement('button'); editButton.textContent = 'Edit'; editButton.className = 'edit-btn'; editButton.onclick = function() { prepareEditNodeRoleMgmt(key); }; actions.appendChild(editButton); if (role.isDeletable !== false) { var deleteButton = document.createElement('button'); deleteButton.textContent = 'Del'; deleteButton.className = 'delete-btn'; deleteButton.onclick = function() { handleDeleteNodeRoleMgmt(key); }; actions.appendChild(deleteButton); } item.appendChild(actions); container.appendChild(item); }); }
+    function renderNodeRoleMgmtList() { var container = document.getElementById('nodeRoleMgmtList'); if (!container) return; container.innerHTML = ''; Object.keys(nodeRoleStyles).sort((a,b)=>nodeRoleStyles[a].name.localeCompare(nodeRoleStyles[b].name)).forEach(key => { var role = nodeRoleStyles[key]; var item = document.createElement('div'); item.className = 'mgmt-list-item'; var content = document.createElement('span'); content.className = 'mgmt-list-item-content'; var swatch = document.createElement('span'); swatch.className = 'mgmt-list-color-swatch'; swatch.style.backgroundColor = role.color; swatch.style.border = '1px solid #555'; var shapeDisplay = document.createElement('span'); shapeDisplay.className = 'legend-node-shape-box'; shapeDisplay.style.borderColor = role.color; shapeDisplay.style.backgroundColor = '#eee'; shapeDisplay.style.borderWidth = '2px'; if (role.shape === 'circle' || role.shape === 'ellipse') shapeDisplay.style.borderRadius = '50%'; else if (role.shape === 'box' || role.shape === 'square') shapeDisplay.style.borderRadius = '0'; else if (role.shape === 'diamond') { shapeDisplay.style.transform = 'rotate(45deg)'; shapeDisplay.style.borderRadius = '0'; } else if (role.shape === 'star') { shapeDisplay.innerHTML = '★'; shapeDisplay.style.border = 'none'; shapeDisplay.style.color = role.color; shapeDisplay.style.fontSize = '16px'; shapeDisplay.style.lineHeight = '16px'; shapeDisplay.style.textAlign = 'center'; shapeDisplay.style.backgroundColor='transparent'; } else shapeDisplay.style.borderRadius = '50%'; content.appendChild(swatch); content.appendChild(shapeDisplay); content.append(` ${role.name} (Key: ${key})`); item.appendChild(content); var actions = document.createElement('span'); actions.className = 'mgmt-list-item-actions'; var editButton = document.createElement('button'); editButton.textContent = 'Edit'; editButton.className = 'edit-btn'; editButton.onclick = function() { prepareEditNodeRoleMgmt(key); }; actions.appendChild(editButton); if (role.isDeletable !== false) { var deleteButton = document.createElement('button'); deleteButton.textContent = 'Del'; deleteButton.className = 'delete-btn'; deleteButton.onclick = function() { handleDeleteNodeRoleMgmt(key); }; actions.appendChild(deleteButton); } item.appendChild(actions); container.appendChild(item); }); }
     function renderRelTypeMgmtList(){var c=document.getElementById('relTypeMgmtList');if(!c)return;c.innerHTML='';edgeTypeStyles.sort((a,b)=>a.label.localeCompare(b.label)).forEach(t=>{var i=document.createElement('div');i.className='mgmt-list-item';var ct=document.createElement('span');ct.className='mgmt-list-item-content';var sw=document.createElement('span');sw.className='mgmt-list-color-swatch';sw.style.backgroundColor=t.color;ct.appendChild(sw);let ar='—';if(t.arrowStyle==='to')ar='→';else if(t.arrowStyle==='bi')ar='↔';let lblInfo=t.showLabelOnDiagram!==false?`Lbl Shown (Align: ${t.labelAlign||'mid'})`:'Lbl Hidden';ct.append(`${t.label} (${ar}), ${lblInfo}, (ID: ${t.id})`);i.appendChild(ct);var ac=document.createElement('span');ac.className='mgmt-list-item-actions';var edB=document.createElement('button');edB.textContent='Edit';edB.className='edit-btn';edB.onclick=function(){prepareEditRelTypeMgmt(t.id)};ac.appendChild(edB);if(t.isDeletable!==false){var dlB=document.createElement('button');dlB.textContent='Del';dlB.className='delete-btn';dlB.onclick=function(){handleDeleteRelTypeMgmt(t.id)};ac.appendChild(dlB)}i.appendChild(ac);c.appendChild(i)})}
     function populateNodeLegend(){var c=document.getElementById('nodeLegend');if(!c)return;var h=c.querySelector('h3')||document.createElement('h3');h.textContent='Node Depts. (Fill)';c.innerHTML='';c.appendChild(h);Object.keys(nodeGroupStyles).sort((a,b)=>nodeGroupStyles[a].name.localeCompare(nodeGroupStyles[b].name)).forEach(k=>{if(!nodeGroupStyles.hasOwnProperty(k))return;var g=nodeGroupStyles[k];var i=document.createElement('div');i.className='legend-item';var b=document.createElement('span');b.className='legend-node-color-box'; b.style.borderRadius = '50%'; b.style.backgroundColor=g.color.background;b.style.borderColor='transparent'; b.style.borderWidth = '0'; var t=document.createElement('span');t.className='legend-text';t.textContent=g.name;i.appendChild(b);i.appendChild(t);c.appendChild(i);})}
-    function populateRoleLegend() { var container = document.getElementById('roleLegend'); if (!container) return; var h3 = container.querySelector('h3') || document.createElement('h3'); h3.textContent = 'Node Roles (Outline & Shape)'; container.innerHTML = ''; container.appendChild(h3); Object.keys(nodeRoleStyles).sort((a,b)=>nodeRoleStyles[a].name.localeCompare(nodeRoleStyles[b].name)).forEach(key => { var role = nodeRoleStyles[key]; var item = document.createElement('div'); item.className = 'legend-item'; var colorBox = document.createElement('span'); colorBox.className = 'legend-node-color-box'; colorBox.style.backgroundColor = 'transparent'; colorBox.style.borderColor = role.color; var shapeDisplay = document.createElement('span'); shapeDisplay.className = 'legend-node-shape-box'; shapeDisplay.style.display = 'inline-block'; shapeDisplay.style.width = '12px'; shapeDisplay.style.height = '12px'; shapeDisplay.style.marginRight = '4px'; shapeDisplay.style.verticalAlign = 'middle'; shapeDisplay.style.backgroundColor = '#eee'; shapeDisplay.style.border = `2px solid ${role.color}`; if (role.shape === 'circle' || role.shape === 'ellipse') { colorBox.style.borderRadius = '50%'; shapeDisplay.style.borderRadius = '50%'; } else if (role.shape === 'box' || role.shape === 'square') { colorBox.style.borderRadius = '0'; shapeDisplay.style.borderRadius = '0'; } else if (role.shape === 'diamond') { colorBox.style.borderRadius = '0'; colorBox.style.transform = 'rotate(45deg)'; shapeDisplay.style.borderRadius = '0'; shapeDisplay.style.transform = 'rotate(45deg)'; } else if (role.shape === 'star') { colorBox.style.display='none'; shapeDisplay.innerHTML = '★'; shapeDisplay.style.border = 'none'; shapeDisplay.style.color = role.color; shapeDisplay.style.fontSize = '16px'; shapeDisplay.style.lineHeight = '16px'; shapeDisplay.style.textAlign = 'center'; shapeDisplay.style.backgroundColor = 'transparent'; } else { colorBox.style.borderRadius = '50%'; shapeDisplay.style.borderRadius = '50%'; } var text = document.createElement('span'); text.className = 'legend-text'; text.textContent = `${role.name}`; item.appendChild(colorBox); item.appendChild(shapeDisplay); item.appendChild(text); container.appendChild(item); }); }
+    function populateRoleLegend() { // --- UPDATED FUNCTION ---
+         var container = document.getElementById('roleLegend'); if (!container) return;
+         var h3 = container.querySelector('h3') || document.createElement('h3');
+         h3.textContent = 'Node Roles (Shape & Outline)'; // Updated title slightly
+         container.innerHTML = ''; container.appendChild(h3);
+
+         Object.keys(nodeRoleStyles).sort((a, b) => nodeRoleStyles[a].name.localeCompare(nodeRoleStyles[b].name)).forEach(key => {
+             var role = nodeRoleStyles[key];
+             var item = document.createElement('div');
+             item.className = 'legend-item';
+
+             // Create ONE symbol combining shape and border color
+             var shapeDisplay = document.createElement('span');
+             shapeDisplay.className = 'legend-node-shape-box'; // Use existing class for size/margins
+             shapeDisplay.style.display = 'inline-block';
+             // Apply role-specific styles
+             shapeDisplay.style.backgroundColor = '#ffffff'; // Use white background for better border visibility
+             shapeDisplay.style.borderColor = role.color;
+             shapeDisplay.style.borderWidth = '2px'; // Keep border width consistent
+
+            // Apply shape styling
+             if (role.shape === 'circle' || role.shape === 'ellipse') {
+                 shapeDisplay.style.borderRadius = '50%';
+             } else if (role.shape === 'box' || role.shape === 'square') {
+                 shapeDisplay.style.borderRadius = '2px'; // Slight rounding for boxes
+             } else if (role.shape === 'database') {
+                // Approximation for legend: cylinder-like
+                 shapeDisplay.style.borderRadius = '50% / 20%';
+                 shapeDisplay.style.height = '18px'; // Adjust height slightly
+             } else if (role.shape === 'diamond') {
+                 shapeDisplay.style.borderRadius = '0';
+                 shapeDisplay.style.transform = 'rotate(45deg)';
+                 shapeDisplay.style.marginTop = '3px'; shapeDisplay.style.marginBottom = '3px'; // Adjust spacing for diamond
+             } else if (role.shape === 'star') {
+                 // Represent star with character (simplification for legend)
+                 shapeDisplay.innerHTML = '★';
+                 shapeDisplay.style.border = 'none';
+                 shapeDisplay.style.color = role.color;
+                 shapeDisplay.style.fontSize = '18px'; // Slightly larger star
+                 shapeDisplay.style.lineHeight = '16px';
+                 shapeDisplay.style.textAlign = 'center';
+                 shapeDisplay.style.backgroundColor = 'transparent';
+                 shapeDisplay.style.width = '18px'; // Adjust width for star
+                 shapeDisplay.style.verticalAlign = 'middle';
+             } else if (role.shape === 'triangle' || role.shape === 'triangleDown'){
+                 // Represent triangle with character
+                 shapeDisplay.innerHTML = (role.shape === 'triangle' ? '▲' : '▼');
+                 shapeDisplay.style.border = 'none';
+                 shapeDisplay.style.color = role.color;
+                 shapeDisplay.style.fontSize = '18px';
+                 shapeDisplay.style.lineHeight = '16px';
+                 shapeDisplay.style.textAlign = 'center';
+                 shapeDisplay.style.backgroundColor = 'transparent';
+                 shapeDisplay.style.width = '18px';
+                 shapeDisplay.style.verticalAlign = 'middle';
+             } else if (role.shape === 'hexagon') {
+                 // Cannot easily do hexagon with CSS border-radius, represent as circle
+                  shapeDisplay.style.borderRadius = '50%';
+                  shapeDisplay.title = 'Hexagon (shown as circle)'; // Tooltip
+             } else if (role.shape === 'text') {
+                 // Represent text with T
+                 shapeDisplay.innerHTML = 'T';
+                 shapeDisplay.style.border = `2px solid ${role.color}`;
+                 shapeDisplay.style.color = role.color;
+                 shapeDisplay.style.fontWeight = 'bold';
+                 shapeDisplay.style.fontSize = '12px';
+                 shapeDisplay.style.lineHeight = '12px';
+                 shapeDisplay.style.textAlign = 'center';
+                 shapeDisplay.style.backgroundColor = '#ffffff';
+                 shapeDisplay.style.borderRadius = '2px';
+             }
+              else { // Default: Circle
+                 shapeDisplay.style.borderRadius = '50%';
+             }
+
+             var text = document.createElement('span');
+             text.className = 'legend-text';
+             text.textContent = `${role.name}`;
+
+             item.appendChild(shapeDisplay); // Add the single combined symbol
+             item.appendChild(text);
+             container.appendChild(item);
+         });
+     }
     function populateEdgeLegend(){var c=document.getElementById('edgeLegend');if(!c)return;var h=c.querySelector('h3')||document.createElement('h3');h.textContent='Relationship Types (Color)';c.innerHTML='';c.appendChild(h);edgeTypeStyles.sort((a,b)=>a.label.localeCompare(b.label)).forEach(t=>{var i=document.createElement('div');i.className='legend-item';var l=document.createElement('span');l.className='legend-edge-color-line';l.style.backgroundColor=t.color; var s=document.createElement('span');s.className='legend-text';s.textContent=t.label;i.appendChild(l);i.appendChild(s);c.appendChild(i);})}
 
     // --- Image Export ---
-    function exportDiagramWithLegend() {
+     function exportDiagramWithLegend() { // --- UPDATED FUNCTION ---
         if (typeof html2canvas === 'undefined') {
             alert('html2canvas library is not loaded. Cannot export image with legend.');
             console.error('html2canvas not found.');
             return;
         }
 
-        const mainVisualizationArea = document.querySelector('.main-visualization-container');
-        if (mainVisualizationArea) {
-            console.log("Attempting to capture visualization area with html2canvas...");
-            let originalPhysicsState = visNetworkOptions.physics.enabled;
-            if (originalPhysicsState && network) {
-                network.setOptions({ physics: { enabled: false } });
-            }
+        const networkElement = document.getElementById('mynetwork');
+        const legendElement = document.getElementById('legendContainer');
 
-            setTimeout(() => {
-                html2canvas(mainVisualizationArea, {
-                    allowTaint: true,
-                    useCORS: true,
-                    logging: true, 
-                    scale: 2.0, 
-                    onclone: (clonedDoc) => {
-                        console.log("html2canvas: Document cloned for capture.");
-                    }
-                }).then(canvas => {
-                    console.log("html2canvas capture successful.");
-                    var dataURL = canvas.toDataURL('image/png');
+        if (!networkElement || !legendElement) {
+            alert("Could not find the network or legend elements to export.");
+            console.error('Export elements not found.');
+            return;
+        }
+
+        console.log("Attempting to capture network and legend separately...");
+
+        let originalPhysicsState = visNetworkOptions.physics.enabled;
+        if (originalPhysicsState && network) {
+            network.setOptions({ physics: { enabled: false } });
+            console.log("Physics temporarily disabled for export.");
+        }
+
+        // Slightly longer timeout to ensure layout stabilization
+        setTimeout(() => {
+            const scaleFactor = 2.0; // Keep high resolution
+            const padding = 20 * scaleFactor; // Padding around elements and between them
+
+            const html2canvasOptions = {
+                allowTaint: true,
+                useCORS: true,
+                logging: false, // Reduce console noise
+                scale: scaleFactor,
+                backgroundColor: '#ffffff' // Ensure a white background
+            };
+
+            // 1. Capture the network
+            const promiseNetwork = html2canvas(networkElement, html2canvasOptions)
+                .catch(err => { console.error("Error capturing network:", err); throw err; }); // Ensure errors are propagated
+
+            // 2. Capture the legend
+            const promiseLegend = html2canvas(legendElement, html2canvasOptions)
+                .catch(err => { console.error("Error capturing legend:", err); throw err; }); // Ensure errors are propagated
+
+            // 3. Combine canvases when both captures are done
+            Promise.all([promiseNetwork, promiseLegend])
+                .then(([networkCanvas, legendCanvas]) => {
+                    console.log("Both network and legend captured successfully.");
+
+                    // Create a new combined canvas
+                    const combinedCanvas = document.createElement('canvas');
+                    const combinedCtx = combinedCanvas.getContext('2d');
+
+                    // Calculate dimensions for the combined canvas
+                    combinedCanvas.width = networkCanvas.width + legendCanvas.width + (padding * 2); // Network + Padding + Legend + Padding
+                    combinedCanvas.height = Math.max(networkCanvas.height, legendCanvas.height) + (padding); // Max height + Padding
+
+                    // Fill background (optional, html2canvas might do this)
+                    combinedCtx.fillStyle = '#ffffff';
+                    combinedCtx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+
+                    // Draw the network canvas onto the combined canvas
+                    combinedCtx.drawImage(networkCanvas, padding/2 , padding/2 );
+
+                    // Draw the legend canvas next to the network
+                    combinedCtx.drawImage(legendCanvas, networkCanvas.width + padding, padding/2 );
+
+                    console.log("Canvases combined.");
+
+                    // Trigger download
+                    var dataURL = combinedCanvas.toDataURL('image/png');
                     var a = document.createElement('a');
                     a.href = dataURL;
                     a.download = 'network_with_legend.png';
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
-                    console.log("Image download initiated.");
+                    console.log("Combined image download initiated.");
 
-                    if (originalPhysicsState && network) {
-                        network.setOptions({ physics: { enabled: true } });
-                    }
-
-                }).catch(error => {
-                    console.error('Error exporting with html2canvas:', error);
+                })
+                .catch(error => {
+                    console.error('Error during combined image export process:', error);
                     alert('Error exporting image. Check console for details.');
+                })
+                .finally(() => {
+                    // Re-enable physics if it was originally enabled
                     if (originalPhysicsState && network) {
                         network.setOptions({ physics: { enabled: true } });
+                        console.log("Physics re-enabled.");
                     }
                 });
-            }, 250); 
 
-        } else {
-            alert("Could not find the main visualization area to export.");
-        }
+        }, 400); // Increased timeout to 400ms
     }
+
 
 </script>
 </body>
