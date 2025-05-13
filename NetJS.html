@@ -1197,7 +1197,7 @@
             return;
         } else if (numEdges === 1) {
             const edge = allEdgesBetweenNodes[0];
-            const singleEdgeSmoothOpt = deepCopy(visNetworkOptions.edges.smooth) || { enabled: true, type: "dynamic", roundness: 0.5 };
+            const singleEdgeSmoothOpt = deepCopy(visNetworkOptions.edges.smooth) || { enabled: true, type: "continuous", roundness: 0.5 };
             if (singleEdgeSmoothOpt.enabled === undefined) singleEdgeSmoothOpt.enabled = true;
 
             if (JSON.stringify(edge.smooth) !== JSON.stringify(singleEdgeSmoothOpt)) {
